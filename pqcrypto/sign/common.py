@@ -35,7 +35,11 @@ def _sign_sign_factory(ffi, lib, use_threadpool=False):
         if 0 != lib.crypto_sign_signature(signature_buf, signature_len, message, len(message), secret_key):
             raise RuntimeError("Signature generation failed")
 
-        signature_len = struct.unpack("Q", ffi.buffer(signature_len, 8))[0]
+        if sys.maxsize > 2147483647:
+            signature_len = struct.unpack("Q", ffi.buffer(signature_len, 8))[0]
+        else:
+            signature_len = struct.unpack("I", ffi.buffer(signature_len, 4))[0]
+
         return bytes(ffi.buffer(signature_buf, signature_len))
 
     return _run_in_threadpool(sign) if use_threadpool else sign

@@ -1,4 +1,4 @@
-import struct
+import struct, sys
 from ..common import _run_in_threadpool
 
 
